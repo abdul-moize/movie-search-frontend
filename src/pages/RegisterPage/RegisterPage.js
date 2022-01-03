@@ -1,10 +1,8 @@
 import styled from '@emotion/styled';
 import { Button, TextField, Typography } from '@mui/material';
 import { React, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { setToken } from '../../redux/nodes/entities/user/actions';
-import { login } from '../../services/authService';
+import { register } from '../../services/authService';
 
 const StyledButton = styled(Button, {})`
   font-size: larger;
@@ -16,7 +14,7 @@ const ErrorText = styled(Typography)`
 `;
 
 const Container = styled.div`
-  width: 30%;
+  width: 40%;
   height: 50%;
   display: flex;
   margin: auto;
@@ -39,30 +37,47 @@ const FormTextField = styled(TextField)`
   width: 80%;
 `;
 
-function LoginPage() {
+function RegisterPage() {
   const formRef = useRef();
 
   const [errorMessage, setErrorMessage] = useState('');
-  const dis = useDispatch();
   const nav = useNavigate();
   const onSubmit = async (e) => {
     e.preventDefault();
+    const emailRegex = /[0-9a-zA-Z][0-9a-zA-Z._]*@[0-9a-zA-Z]+\.[a-zA-Z]{2,}\b/;
+    const passwordRegex = /\w{8,}/;
     setErrorMessage('');
     const formData = new FormData(formRef.current);
-    const { token, refreshToken } = await login(formData);
-    if (token && refreshToken) {
-      dis(setToken(token, refreshToken));
-      nav('/home', { replace: true });
+    const [name, email, password] = ['name', 'email', 'password'].map((field) => formData.get(field));
+    if (name === ' ') {
+      setErrorMessage('Name can not be Blank');
+    } else if (!emailRegex.test(email)) {
+      setErrorMessage('Please enter a valid email');
+    } else if (!passwordRegex.test(password)) {
+      setErrorMessage('Please enter password of length 8 or more and contains digits and letters');
     } else {
-      setErrorMessage('Wrong Email or Password');
+      const response = await register(formData);
+      if (response.email) {
+        nav('/login', { replace: true });
+      } else {
+        setErrorMessage('User with this email already exists');
+      }
     }
   };
 
   return (
     <Container>
-      <Typography variant="h3">Login Page</Typography>
+      <Typography variant="h3">Register Page</Typography>
       <FormContainer onSubmit={onSubmit} ref={formRef}>
         {errorMessage && <ErrorText color="error">{errorMessage}</ErrorText>}
+        <FormTextField
+          variant="outlined"
+          label="Name"
+          placeholder="Enter Name"
+          name="name"
+          required
+          margin="dense"
+        />
         <FormTextField
           variant="outlined"
           label="Email"
@@ -82,11 +97,11 @@ function LoginPage() {
           margin="dense"
         />
         <StyledButton variant="contained" type="submit">
-          Log in
+          Register
         </StyledButton>
       </FormContainer>
     </Container>
   );
 }
 
-export default LoginPage;
+export default RegisterPage;
