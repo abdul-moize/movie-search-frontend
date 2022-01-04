@@ -5,6 +5,7 @@ import { Route, Routes } from 'react-router-dom';
 import LatestMovies from './pages/LatestMovies/LatestMovies';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import TopRatedMovies from './pages/TopRatedMovies';
 import store from './redux/store';
 
 const MainContainer = styled.div`
@@ -19,6 +20,7 @@ function App() {
           <Route exact path="/login" element={<LoginPage />} />
           <Route exact path="/register" element={<RegisterPage />} />
           <Route exact path="/latest" element={<LatestMovies />} />
+          <Route exact path="/top_rated" element={<TopRatedMovies />} />
         </Routes>
       </MainContainer>
     </Provider>

@@ -1,8 +1,8 @@
-import { IMAGE_API_BASE, LATEST_MOVIES_API } from '../constants';
+import { IMAGE_API_BASE, LATEST_MOVIES_API, TOP_RATED_MOVIES_API } from '../constants';
 
-const getLatestMovies = async (page = 1) => {
+const getMovies = async (api, page = 1) => {
   try {
-    const movies = await (await fetch(`${LATEST_MOVIES_API}${page}`)).json();
+    const movies = await (await fetch(`${api}${page}`)).json();
     return {
       pages: movies.total_pages,
       movies: movies.results.map((movie) => ({
@@ -17,4 +17,6 @@ const getLatestMovies = async (page = 1) => {
   }
 };
 
-export default getLatestMovies;
+export const getLatestMovies = getMovies.bind(null, LATEST_MOVIES_API);
+
+export const getTopRatedMovies = getMovies.bind(null, TOP_RATED_MOVIES_API);
