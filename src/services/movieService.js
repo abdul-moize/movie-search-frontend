@@ -1,4 +1,4 @@
-import { IMAGE_API_BASE, LATEST_MOVIES_API, TOP_RATED_MOVIES_API } from '../constants';
+import { IMAGE_API_BASE, LATEST_MOVIES_API, POPULAR_MOVIES_API, TOP_RATED_MOVIES_API } from '../constants';
 
 const getMovies = async (api, page = 1) => {
   try {
@@ -20,3 +20,5 @@ const getMovies = async (api, page = 1) => {
 export const getLatestMovies = getMovies.bind(null, LATEST_MOVIES_API);
 
 export const getTopRatedMovies = getMovies.bind(null, TOP_RATED_MOVIES_API);
+
+export const getPopularMovies = getMovies.bind(null, POPULAR_MOVIES_API);

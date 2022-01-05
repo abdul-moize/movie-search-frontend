@@ -4,7 +4,7 @@ import MovieList from '../../components/MovieList';
 
 function LatestMovies() {
   return (
-    <MovieList api={getLatestMovies} />
+    <MovieList api={getLatestMovies} title="latest" />
   );
 }
 

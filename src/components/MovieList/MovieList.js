@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { Pagination, Typography } from '@mui/material';
@@ -28,7 +29,7 @@ const TitleContainer = styled(Typography)`
   border-radius: 5px;
 `;
 
-function MovieList({ api }) {
+function MovieList({ api, title }) {
   const [movies, setMovies] = useState([]);
   const [totalPages, setTotalPages] = useState(10);
   const loadMovies = (page) => {
@@ -42,7 +43,9 @@ function MovieList({ api }) {
   }, []);
   return (
     <Container height={window.innerHeight}>
-      <TitleContainer variant="h6">TOP RATED MOVIES</TitleContainer>
+      <Link to={`/${title}`} style={{ textDecoration: 'none' }}>
+        <TitleContainer variant="h6">{`${title.toUpperCase()} MOVIES`}</TitleContainer>
+      </Link>
       <MoviesContainer>
         {movies.length !== 0 && movies.map((movie) => <MovieCard movie={movie} key={movie.id} />)}
       </MoviesContainer>
@@ -62,10 +65,12 @@ function MovieList({ api }) {
 
 MovieList.defaultProps = {
   api: () => {},
+  title: '',
 };
 
 MovieList.propTypes = {
   api: PropTypes.func,
+  title: PropTypes.string,
 };
 
 export default MovieList;
