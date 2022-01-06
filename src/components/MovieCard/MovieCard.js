@@ -5,15 +5,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Card = styled(Link)`
-  width: 15%;
-  margin: 15px;
+  width: 20%;
   text-decoration: none;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Image = styled.img`
-  width: 100%;
+  width: 90%;
   height: 90%;
   border-radius: 10px;
 `;
@@ -24,7 +25,7 @@ const Title = styled(Typography)`
   text-overflow: ellipsis;
   white-space: nowrap;
   color: white;
-  width: 100%;
+  width: 90%;
   height: 10%;
 `;
 
@@ -32,7 +33,7 @@ export default function MovieCard({ movie: { img, title, href } }) {
   return (
     <Card to={href}>
       <Image src={img} alt={title} />
-      <Title>{title}</Title>
+      <Title title={title}>{title}</Title>
     </Card>
   );
 }
