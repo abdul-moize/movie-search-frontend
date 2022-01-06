@@ -43,7 +43,7 @@ function LoginPage() {
   const formRef = useRef();
 
   const [errorMessage, setErrorMessage] = useState('');
-  const dis = useDispatch();
+  const dispatch = useDispatch();
   const nav = useNavigate();
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -51,7 +51,7 @@ function LoginPage() {
     const formData = new FormData(formRef.current);
     const { token, refreshToken } = await login(formData);
     if (token && refreshToken) {
-      dis(setToken(token, refreshToken));
+      dispatch(setToken(token, refreshToken));
       nav('/home', { replace: true });
     } else {
       setErrorMessage('Wrong Email or Password');

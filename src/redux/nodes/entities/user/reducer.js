@@ -1,8 +1,8 @@
-import { SET_TOKEN } from './actions';
+import { CLEAR_TOKEN, SET_TOKEN } from './actions';
 
 const initialState = {
-  token: localStorage.getItem('token'),
-  refreshToken: localStorage.getItem('refreshToken'),
+  token: localStorage.getItem('token') || '',
+  refreshToken: localStorage.getItem('refreshToken') || '',
   loading: false,
   error: '',
 };
@@ -17,6 +17,15 @@ export default function userReducer(state = initialState, action) {
         ...state,
         token: action.token,
         refreshToken: action.refreshToken,
+      };
+    }
+    case CLEAR_TOKEN: {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      return {
+        ...state,
+        token: '',
+        refreshToken: '',
       };
     }
     default: {

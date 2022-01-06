@@ -1,4 +1,4 @@
-import { LOGIN_API, REGISTER_API } from '../constants';
+import { LOGIN_API, LOGOUT_API, REGISTER_API } from '../constants';
 
 export const login = (formData) => fetch(LOGIN_API, {
   method: 'POST',
@@ -30,3 +30,13 @@ export const register = (formData) => fetch(REGISTER_API, {
   .catch((err) => {
     throw err;
   });
+
+export const logout = (refreshToken) => fetch(LOGOUT_API, {
+  method: 'DELETE',
+  body: JSON.stringify({
+    refreshToken,
+  }),
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
