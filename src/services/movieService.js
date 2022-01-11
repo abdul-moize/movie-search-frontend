@@ -8,6 +8,10 @@ import {
   LATEST_MOVIES_API,
   POPULAR_MOVIES_API,
   TOP_RATED_MOVIES_API,
+  SEARCH_MOVIES_API,
+  SEARCH_BY_CAST_API,
+  SEARCH_BY_DIRECTOR_API,
+  SEARCH_BY_GENRE_API,
 } from '../constants';
 
 const extractData = (movie) => ({
@@ -28,6 +32,7 @@ const getMovies = async (api, page = 1) => {
     return {
       pages: movies.total_pages,
       movies: movies.results.map((movie) => extractData(movie)),
+      page: movies.page,
     };
   } catch (error) {
     throw error.message;
@@ -67,10 +72,10 @@ export const getMovieDetail = async (id) => {
 
 export const getSimilarMovies = (id) => getMovies.bind(null, GET_SIMILAR_MOVIES_API.replace('id', id));
 
-const extractReviewData = ({ author_details, content, updated_at }) => ({
-  name: author_details.username,
+const extractReviewData = ({ author_details: { username, avatar_path }, content, updated_at }) => ({
+  name: username,
   review: content,
-  avatar: author_details.avatar_path.slice(1),
+  avatar: avatar_path && avatar_path.startsWith('/https') ? avatar_path.slice(1) : `${IMAGE_API_BASE}/w185${avatar_path}`,
   date: updated_at,
 });
 
@@ -81,3 +86,11 @@ export const getReviews = async (id, page = 1) => {
     reviews: reviews.results.map((review) => extractReviewData(review)),
   };
 };
+
+export const searchMovies = (movieId) => getMovies.bind(null, SEARCH_MOVIES_API.replace('name', movieId));
+
+export const searchMoviesByCast = (personId) => getMovies.bind(null, SEARCH_BY_CAST_API.replace('id', personId));
+
+export const searchMoviesByDirector = (personId) => getMovies.bind(null, SEARCH_BY_DIRECTOR_API.replace('id', personId));
+
+export const searchMoviesByGenre = (genreId) => getMovies.bind(null, SEARCH_BY_GENRE_API.replace('id', genreId));

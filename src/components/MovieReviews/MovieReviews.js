@@ -11,6 +11,9 @@ export default function MovieReviews() {
     getReviews(id, state.page).then((reviews) => {
       setState({ ...reviews, loading: false });
     });
+    return () => {
+      setState({});
+    };
   }, []);
   return (
     <Stack justifyContent="center" alignItems="center">

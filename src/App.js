@@ -1,4 +1,3 @@
-import { CircularProgress, Stack } from '@mui/material';
 import { React } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import NavBar from './components/NavBar';
@@ -7,7 +6,9 @@ import LoginPage from './pages/LoginPage';
 import MovieDetail from './pages/MovieDetail';
 import PopularMovies from './pages/PopularMovies';
 import RegisterPage from './pages/RegisterPage';
+import SearchPage from './pages/SearchPage';
 import TopRatedMovies from './pages/TopRatedMovies';
+import { searchMovies, searchMoviesByCast, searchMoviesByDirector, searchMoviesByGenre } from './services/movieService';
 
 function App() {
   return (
@@ -33,16 +34,12 @@ function App() {
             )
           }
         />
-        <Route
-          path="/"
-          element={
-            (
-              <Stack>
-                <CircularProgress />
-              </Stack>
-            )
-          }
-        />
+        <Route path="/" element={<SearchPage api={searchMovies} />} />
+        <Route path="/:query" element={<SearchPage api={searchMovies} />} />
+        <Route path="/actor/:query*" element={<SearchPage api={searchMoviesByCast} />} />
+        <Route path="/director/:query" element={<SearchPage api={searchMoviesByDirector} />} />
+        <Route path="/genre/:query" element={<SearchPage api={searchMoviesByGenre} />} />
+        <Route path="*" element={<>404 page not found</>} />
       </Routes>
     </>
   );

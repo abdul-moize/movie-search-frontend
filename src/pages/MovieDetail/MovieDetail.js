@@ -72,10 +72,10 @@ export default function MovieDetail() {
               </DetailContainer>
               <DetailContainer>
                 <Typography color="#8e95a5" width="20%">Genres</Typography>
-                {movieDetails.genres.map(({ name }, index) => (
+                {movieDetails.genres.map(({ name, id }, index) => (
                   <React.Fragment key={name}>
                     {index > 0 && ','}
-                    <CustomLink to={`/genre/${name}`} index={index}>{name}</CustomLink>
+                    <CustomLink to={`/genre/${id}`} index={index}>{name}</CustomLink>
                   </React.Fragment>
                 ))}
               </DetailContainer>

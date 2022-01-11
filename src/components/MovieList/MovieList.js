@@ -30,11 +30,12 @@ const TitleContainer = styled(Typography)`
 
 function MovieList({ api, title }) {
   const [movies, setMovies] = useState([]);
-  const [totalPages, setTotalPages] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadMovies = (page) => {
     api(page).then((data) => {
+      console.log(data);
       setMovies(data.movies);
       setTotalPages(data.pages);
       setIsLoading(false);
@@ -42,11 +43,17 @@ function MovieList({ api, title }) {
   };
   useEffect(() => {
     loadMovies(1);
+    return () => {
+      setMovies([]);
+    };
   }, []);
   return (
     <Container>
       {title.includes('similar') ? (
-        <TitleContainer variant="h6" style={{ alignSelf: 'flex-start', marginLeft: '10.5%' }}>
+        <TitleContainer
+          variant="h6"
+          style={{ alignSelf: 'flex-start', marginLeft: '10.5%' }}
+        >
           {`${title.toUpperCase().replaceAll('_', ' ')} MOVIES`}
         </TitleContainer>
       ) : (
@@ -58,27 +65,29 @@ function MovieList({ api, title }) {
         </Link>
       )}
 
-      {isLoading ? (
-        <CircularProgress />
-      ) : (
+      {isLoading && <CircularProgress />}
+      {!isLoading && totalPages > 0 ? (
         <MoviesContainer>
           {movies.map((movie) => (
             <MovieCard movie={movie} key={movie.id} />
           ))}
         </MoviesContainer>
+      ) : (
+        !isLoading && <Typography color="white">No movies found</Typography>
       )}
-
-      <Pagination
-        count={totalPages}
-        color="primary"
-        shape="rounded"
-        size="large"
-        sx={{ marginBottom: '10px' }}
-        onChange={(e, p) => {
-          loadMovies(p);
-          setIsLoading(true);
-        }}
-      />
+      {totalPages > 0 && (
+        <Pagination
+          count={totalPages}
+          color="primary"
+          shape="rounded"
+          size="large"
+          sx={{ marginBottom: '10px' }}
+          onChange={(e, p) => {
+            loadMovies(p);
+            setIsLoading(true);
+          }}
+        />
+      )}
     </Container>
   );
 }
