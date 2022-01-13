@@ -7,14 +7,17 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import store from './redux/store';
+import { FavoritesContextProvider } from './context/FavoritesContext';
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </BrowserRouter>
+    <Provider store={store}>
+      <FavoritesContextProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </FavoritesContextProvider>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root'),
 );

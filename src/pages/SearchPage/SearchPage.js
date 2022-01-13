@@ -1,10 +1,16 @@
-import { useNavigate, useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import React, { useRef } from 'react';
-import { Autocomplete, Button, Stack, TextField, Typography } from '@mui/material/';
+import React, { useRef, useState } from 'react';
+import {
+  Autocomplete,
+  Button,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material/';
 import SearchIcon from '@mui/icons-material/Search';
 import MovieList from '../../components/MovieList';
+import SearchFilters from '../../components/SearchFilters';
 
 const SimpleTextField = styled(TextField)({
   '& label.Mui-focused': {
@@ -60,22 +66,30 @@ const SearchBarContainer = styled(MainContainer)`
   align-items: center;
   justify-content: center;
   width: 60%;
-  height: 10%;
+  height: 70px;
 `;
+
 export default function SearchPage({ api }) {
-  /* eslint-disable react/jsx-props-no-spreading */
-  const inputRef = useRef();
-  const { query } = useParams() || '';
-  const navigate = useNavigate();
+  const searchBarRef = useRef();
+
+  const [filters, setFilters] = useState({
+    sortBy: 'release_date',
+    rating: 12,
+    popularity: 12,
+    genres: [],
+    title: '',
+    asc: -1,
+    release_date: { from: '1900', to: '2100' },
+  });
   const onSearch = () => {
-    if (inputRef.current.value.trim() !== '' && query !== inputRef.current.value.trim()) {
-      navigate(`/${inputRef.current.value}`);
-    }
+    setFilters({ ...filters, title: searchBarRef.current.value });
   };
 
   return (
     <MainContainer>
-      <Typography variant="h2" margin="30px">Search Movies</Typography>
+      <Typography variant="h2" margin="30px">
+        Search Movies
+      </Typography>
       <SearchBarContainer>
         <SearchBar
           freeSolo
@@ -83,9 +97,10 @@ export default function SearchPage({ api }) {
           disableClearable
           renderInput={(params) => (
             <SimpleTextField
+              // eslint-disable-next-line react/jsx-props-no-spreading
               {...params}
               name="query"
-              inputRef={inputRef}
+              inputRef={searchBarRef}
               onKeyDown={(event) => event.code === 'Enter' && onSearch()}
               inputProps={{ ...params.inputProps, type: 'search' }}
               placeholder="Search for movie"
@@ -97,7 +112,12 @@ export default function SearchPage({ api }) {
           <SearchIcon style={{ width: '100%', height: '100%' }} />
         </SearchButton>
       </SearchBarContainer>
-      {query && <MovieList key={query} api={api(query)} title="Matched" />}
+      <SearchFilters setFilters={setFilters} filters={filters} />
+      <MovieList
+        key={Object.values(filters)}
+        api={api(filters)}
+        title="Matched"
+      />
     </MainContainer>
   );
 }

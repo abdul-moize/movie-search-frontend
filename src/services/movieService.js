@@ -12,6 +12,7 @@ import {
   SEARCH_BY_CAST_API,
   SEARCH_BY_DIRECTOR_API,
   SEARCH_BY_GENRE_API,
+  GET_GENRES_API,
 } from '../constants';
 
 const extractData = (movie) => ({
@@ -55,12 +56,12 @@ export const getMovieDetail = async (id) => {
       name,
       img: `${IMAGE_API_BASE}/w185${profile_path}`,
       character,
-      href: `/actor/${id}`,
+      href: `/actor/${id}/${name}`,
     })),
     movieCast.crew.filter((person) => person.job === 'Director').map(({ name, profile_path, id }) => ({
       name,
       img: `${IMAGE_API_BASE}/w185${profile_path}`,
-      href: `/director/${id}`,
+      href: `/director/${id}/${name}`,
     })),
   ];
   return {
@@ -87,10 +88,29 @@ export const getReviews = async (id, page = 1) => {
   };
 };
 
-export const searchMovies = (movieId) => getMovies.bind(null, SEARCH_MOVIES_API.replace('name', movieId));
+export const searchMovies = (filters) => async (page) => {
+  console.log(filters);
+  const movies = await (await fetch(SEARCH_MOVIES_API, {
+    method: 'POST',
+    body: JSON.stringify({ ...filters, page }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })).json();
+  return {
+    pages: movies.total_pages,
+    movies: movies.results.map((movie) => extractData(movie)),
+    page: movies.page,
+  };
+};
 
 export const searchMoviesByCast = (personId) => getMovies.bind(null, SEARCH_BY_CAST_API.replace('id', personId));
 
 export const searchMoviesByDirector = (personId) => getMovies.bind(null, SEARCH_BY_DIRECTOR_API.replace('id', personId));
 
 export const searchMoviesByGenre = (genreId) => getMovies.bind(null, SEARCH_BY_GENRE_API.replace('id', genreId));
+
+export const getGenres = async () => {
+  const genres = await (await fetch(GET_GENRES_API)).json();
+  return genres;
+};

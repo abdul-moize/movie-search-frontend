@@ -1,8 +1,10 @@
 import { React } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import NavBar from './components/NavBar';
+import FavoritesPage from './pages/FavoritesPage/FavoritesPage';
 import LatestMovies from './pages/LatestMovies/LatestMovies';
 import LoginPage from './pages/LoginPage';
+import MoreMoviesBy from './pages/MoreMoviesBy';
 import MovieDetail from './pages/MovieDetail';
 import PopularMovies from './pages/PopularMovies';
 import RegisterPage from './pages/RegisterPage';
@@ -35,10 +37,10 @@ function App() {
           }
         />
         <Route path="/" element={<SearchPage api={searchMovies} />} />
-        <Route path="/:query" element={<SearchPage api={searchMovies} />} />
-        <Route path="/actor/:query*" element={<SearchPage api={searchMoviesByCast} />} />
-        <Route path="/director/:query" element={<SearchPage api={searchMoviesByDirector} />} />
-        <Route path="/genre/:query" element={<SearchPage api={searchMoviesByGenre} />} />
+        <Route path="/actor/:query/:name" element={<MoreMoviesBy api={searchMoviesByCast} />} />
+        <Route path="/director/:query/:name" element={<MoreMoviesBy api={searchMoviesByDirector} />} />
+        <Route path="/genre/:query/:name" element={<MoreMoviesBy api={searchMoviesByGenre} />} />
+        <Route path="/favorites" element={<FavoritesPage />} />
         <Route path="*" element={<>404 page not found</>} />
       </Routes>
     </>

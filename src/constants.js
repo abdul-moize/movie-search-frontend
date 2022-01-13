@@ -14,8 +14,7 @@ export const GET_CREDIT_API = `${MOVIE_API_BASE}/id/credits?api_key=${API_KEY}`;
 export const GET_SIMILAR_MOVIES_API = `${MOVIE_API_BASE}/id/similar?api_key=${API_KEY}&page=`;
 export const GET_REVIEWS_API = `${MOVIE_API_BASE}/id/reviews?api_key=${API_KEY}&page=`;
 
-const SEARCH_API_BASE = process.env.REACT_APP_SEARCH_API_DOMAIN;
-export const SEARCH_MOVIES_API = `${SEARCH_API_BASE}?api_key=${API_KEY}&query=name&page=`;
+export const SEARCH_MOVIES_API = process.env.REACT_APP_SEARCH_API_DOMAIN;
 
 const FILTERED_SEARCH_API_BASE = process.env.REACT_APP_FILTERED_SEARCH_API_DOMAIN;
 export const SEARCH_BY_CAST_API = `${FILTERED_SEARCH_API_BASE}?api_key=${API_KEY}&with_cast=id&page=`;
@@ -23,3 +22,5 @@ export const SEARCH_BY_DIRECTOR_API = `${FILTERED_SEARCH_API_BASE}?api_key=${API
 export const SEARCH_BY_GENRE_API = `${FILTERED_SEARCH_API_BASE}?api_key=${API_KEY}&with_genres=id&page=`;
 
 export const IMAGE_API_BASE = process.env.REACT_APP_IMAGE_API_DOMAIN;
+
+export const GET_GENRES_API = process.env.REACT_APP_GET_GENRES_API_DOMAIN;
