@@ -28,24 +28,26 @@ const TitleContainer = styled(Typography)`
   border-radius: 5px;
 `;
 
-function MovieList({ api, title }) {
-  const [movies, setMovies] = useState([]);
-  const [totalPages, setTotalPages] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+function MovieList({ api, title, moviesList }) {
+  const [movies, setMovies] = useState(moviesList || []);
+  const [totalPages, setTotalPages] = useState(moviesList ? moviesList.length : 0);
+  const [isLoading, setIsLoading] = useState(moviesList === null);
 
   const loadMovies = (page) => {
     api(page).then((data) => {
-      console.log(data);
       setMovies(data.movies);
       setTotalPages(data.pages);
       setIsLoading(false);
     });
   };
   useEffect(() => {
-    loadMovies(1);
-    return () => {
-      setMovies([]);
-    };
+    if (!moviesList) {
+      loadMovies(1);
+      return () => {
+        setMovies([]);
+      };
+    }
+    return () => {};
   }, []);
   return (
     <Container>
@@ -75,7 +77,7 @@ function MovieList({ api, title }) {
       ) : (
         !isLoading && <Typography color="white">No movies found</Typography>
       )}
-      {totalPages > 0 && (
+      {!moviesList && totalPages > 0 && (
         <Pagination
           count={totalPages}
           color="primary"
@@ -95,11 +97,13 @@ function MovieList({ api, title }) {
 MovieList.defaultProps = {
   api: () => {},
   title: '',
+  moviesList: null,
 };
 
 MovieList.propTypes = {
   api: PropTypes.func,
   title: PropTypes.string,
+  moviesList: PropTypes.shape([]),
 };
 
 export default MovieList;

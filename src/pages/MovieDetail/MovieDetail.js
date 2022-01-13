@@ -1,11 +1,13 @@
 import styled from '@emotion/styled';
-import { CircularProgress, Stack, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { Favorite, FavoriteBorder } from '@mui/icons-material';
+import { Checkbox, CircularProgress, FormControlLabel, Stack, Typography } from '@mui/material';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import MovieList from '../../components/MovieList';
 import MovieReviews from '../../components/MovieReviews';
 import PersonCard from '../../components/PersonCard/PersonCard';
 import { getMovieDetail, getSimilarMovies } from '../../services/movieService';
+import FavoritesContext from '../../context/FavoritesContext';
 
 const Image = styled.img`
   width: 25%;
@@ -20,12 +22,14 @@ const DetailContainer = styled.div`
   margin: 5px;
 `;
 
-const Icon = styled.img`
+const IconStyles = `
   width: 30px;
   height: 30px;
   margin: 10px;
   margin-left: 0;
 `;
+
+const Icon = styled.img`${IconStyles}`;
 
 const CustomLink = styled(Link)`
   text-decoration: none;
@@ -36,20 +40,63 @@ const CustomLink = styled(Link)`
   }
 `;
 
+const MovieDetailsContainer = styled(Stack)`
+  flex-direction: row;
+  width: 80%;
+  margin: auto;
+`;
+
+const FavoriteIcon = styled(Favorite)`
+  width: 100%;
+  height: 100%;
+`;
+
+const FavoriteIconBorder = styled(FavoriteBorder)`
+  width: 100%;
+  height: 100%;
+`;
+
+const FavoriteBox = styled(Checkbox)`
+  ${IconStyles}
+  width: 40px;
+  height: 40px;
+  padding: 0px;
+  color: white;
+  &.Mui-checked {
+    color: #00acc1;
+  }
+`;
+
+const FavoriteBoxContainer = styled(FormControlLabel)`
+  margin: 0px;
+`;
 export default function MovieDetail() {
-  const { id } = useParams();
-  const [movieDetails, setMovieDetails] = useState({ loading: true });
+  const id = parseInt(useParams().id, 10);
+
+  const { addFavorite, removeFavorite, isFavorite } = useContext(FavoritesContext);
+  const [movieDetails, setMovieDetails] = useState({ loading: true, found: false });
+
+  const toggleFavorite = () => {
+    if (isFavorite(id)) {
+      removeFavorite(id);
+    } else {
+      addFavorite({ ...movieDetails });
+    }
+  };
+
   useEffect(() => {
     setMovieDetails({ loading: true });
     getMovieDetail(id).then((movieData) => {
-      setMovieDetails({ ...movieData, loading: false });
+      setMovieDetails({ ...movieData, loading: false, found: true });
+    }).catch((err) => {
+      setMovieDetails({ loading: false, found: false, err });
     });
   }, [id]);
   return (
     <Stack color="#00acc1" key={id}>
-      {!movieDetails.loading ? (
+      {!movieDetails.loading && movieDetails.found && (
         <>
-          <Stack flexDirection="row" width="80%" margin="auto">
+          <MovieDetailsContainer>
             <Image src={movieDetails.img} alt={movieDetails.title} />
             <Stack width="70%" margin={3}>
               <Typography variant="h5">{movieDetails.title}</Typography>
@@ -67,6 +114,19 @@ export default function MovieDetail() {
                 <Typography variant="h6" margin="10px">{movieDetails.runtime}</Typography>
               </DetailContainer>
               <DetailContainer>
+                <FavoriteBoxContainer
+                  control={(
+                    <FavoriteBox
+                      icon={<FavoriteIconBorder />}
+                      checkedIcon={<FavoriteIcon />}
+                      checked={isFavorite(id)}
+                      onChange={toggleFavorite}
+                    />
+                  )}
+                  label={`Add${isFavorite(id) ? 'ed' : ''} To Favorites`}
+                />
+              </DetailContainer>
+              <DetailContainer>
                 <Typography color="#8e95a5" width="20%">Release Date</Typography>
                 <Typography>{movieDetails.releaseDate}</Typography>
               </DetailContainer>
@@ -75,7 +135,7 @@ export default function MovieDetail() {
                 {movieDetails.genres.map(({ name, id }, index) => (
                   <React.Fragment key={name}>
                     {index > 0 && ','}
-                    <CustomLink to={`/genre/${id}`} index={index}>{name}</CustomLink>
+                    <CustomLink to={`/genre/${id}/${name}`} index={index}>{name}</CustomLink>
                   </React.Fragment>
                 ))}
               </DetailContainer>
@@ -98,14 +158,20 @@ export default function MovieDetail() {
                 </Stack>
               </DetailContainer>
             </Stack>
-          </Stack>
+          </MovieDetailsContainer>
           <MovieReviews />
           <MovieList api={getSimilarMovies(id)} title="similar" />
         </>
-      ) : (
+      )}
+      {movieDetails.loading && (
         <Stack alignItems="center">
           <CircularProgress />
         </Stack>
+      )}
+      {!movieDetails.loading && !movieDetails.found && (
+        <MovieDetailsContainer>
+          <Typography color="white" textAlign="center">Movie not found</Typography>
+        </MovieDetailsContainer>
       )}
     </Stack>
   );

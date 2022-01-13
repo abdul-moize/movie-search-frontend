@@ -83,6 +83,9 @@ export default function NavBar() {
           <StyledLink to="/top_rated">
             Top Rated
           </StyledLink>
+          <StyledLink to="/favorites">
+            My Favorites
+          </StyledLink>
           {isLoggedIn ? (
             <>
               <StyledLink to="/profile">
