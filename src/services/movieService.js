@@ -13,6 +13,9 @@ import {
   SEARCH_BY_DIRECTOR_API,
   SEARCH_BY_GENRE_API,
   GET_GENRES_API,
+  GET_FAVORITES_API,
+  ADD_TO_FAVORITES_API,
+  REMOVE_FROM_FAVORITES_API,
 } from '../constants';
 
 const extractData = (movie) => ({
@@ -89,9 +92,8 @@ export const getReviews = async (id, page = 1) => {
 };
 
 export const searchMovies = (filters) => async (page) => {
-  console.log(filters);
   const movies = await (await fetch(SEARCH_MOVIES_API, {
-    method: 'POST',
+    method: 'SEARCH',
     body: JSON.stringify({ ...filters, page }),
     headers: {
       'Content-Type': 'application/json',
@@ -114,3 +116,35 @@ export const getGenres = async () => {
   const genres = await (await fetch(GET_GENRES_API)).json();
   return genres;
 };
+
+export const getFavorites = async (token) => {
+  const res = (await fetch(GET_FAVORITES_API, {
+    headers: {
+      Authorization: `BEARER ${token}`,
+    },
+  }));
+  if (res.status >= 200 && res.status <= 204) return res.json();
+  throw res;
+};
+
+export const addToFavorites = (movie, token) => fetch(ADD_TO_FAVORITES_API, {
+  method: 'POST',
+  body: JSON.stringify({ movie }),
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `BEARER ${token}`,
+  },
+}).then((res) => res.json()).catch((err) => {
+  throw err;
+});
+
+export const removeFromFavorites = (movieId, token) => fetch(REMOVE_FROM_FAVORITES_API, {
+  method: 'DELETE',
+  body: JSON.stringify({ movieId }),
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `BEARER ${token}`,
+  },
+}).then((res) => res.json()).catch((err) => {
+  throw err;
+});

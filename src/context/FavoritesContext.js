@@ -1,5 +1,9 @@
-import React, { useState, createContext } from 'react';
+import React, { useState, createContext, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
+import { addToFavorites, getFavorites, removeFromFavorites } from '../services/movieService';
+import { getRefreshToken, getToken } from '../redux/nodes/entities/user/selectors';
+import { useTokenService } from '../services/authService';
 
 const FavoritesContext = createContext({
   favoriteMovies: [],
@@ -11,14 +15,22 @@ const FavoritesContext = createContext({
 export function FavoritesContextProvider({ children }) {
   const [favorites, setFavorites] = useState([]);
 
+  const token = useSelector(getToken);
+  const refreshToken = useSelector(getRefreshToken);
+
+  const dispatch = useDispatch();
   const addFavorite = (movie) => {
-    setFavorites((oldFavorites) => oldFavorites.concat(movie));
+    useTokenService(addToFavorites.bind(null, movie), token, refreshToken, dispatch).then(() => {
+      setFavorites((oldFavorites) => oldFavorites.concat(movie));
+    });
   };
 
   const removeFavorite = (id) => {
-    setFavorites((oldFavorites) => (
-      oldFavorites.filter((favorite) => id !== favorite.id)
-    ));
+    useTokenService(removeFromFavorites.bind(null, id), token, refreshToken, dispatch).then(() => {
+      setFavorites((oldFavorites) => (
+        oldFavorites.filter((favorite) => id !== favorite.id)
+      ));
+    });
   };
 
   const isFavorite = (id) => favorites.some((favorite) => id === favorite.id);
@@ -30,6 +42,11 @@ export function FavoritesContextProvider({ children }) {
     removeFavorite,
     isFavorite,
   };
+
+  useEffect(async () => {
+    const { favorites } = await useTokenService(getFavorites, token, refreshToken, dispatch);
+    setFavorites(() => favorites);
+  }, []);
   return <FavoritesContext.Provider value={context}>{children}</FavoritesContext.Provider>;
 }
 

@@ -24,3 +24,11 @@ export const SEARCH_BY_GENRE_API = `${FILTERED_SEARCH_API_BASE}?api_key=${API_KE
 export const IMAGE_API_BASE = process.env.REACT_APP_IMAGE_API_DOMAIN;
 
 export const GET_GENRES_API = process.env.REACT_APP_GET_GENRES_API_DOMAIN;
+
+export const FAVORITES_API_BASE = process.env.REACT_APP_FAVORITES_API_DOMAIN;
+
+export const ADD_TO_FAVORITES_API = `${FAVORITES_API_BASE}/addToFavorites`;
+
+export const GET_FAVORITES_API = `${FAVORITES_API_BASE}/getFavorites`;
+
+export const REMOVE_FROM_FAVORITES_API = `${FAVORITES_API_BASE}/removeFromFavorites`;

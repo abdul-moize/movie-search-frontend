@@ -103,7 +103,7 @@ MovieList.defaultProps = {
 MovieList.propTypes = {
   api: PropTypes.func,
   title: PropTypes.string,
-  moviesList: PropTypes.shape([]),
+  moviesList: PropTypes.arrayOf(PropTypes.shape({})),
 };
 
 export default MovieList;
