@@ -40,6 +40,8 @@ function MovieList({ api, title, moviesList }) {
       setIsLoading(false);
     });
   };
+  const movieTypes = ['top_rated', 'popular', 'latest'];
+
   useEffect(() => {
     if (!moviesList) {
       loadMovies(1);
@@ -51,7 +53,7 @@ function MovieList({ api, title, moviesList }) {
   }, []);
   return (
     <Container>
-      {title.includes('similar') ? (
+      {!movieTypes.includes(title) ? (
         <TitleContainer
           variant="h6"
           style={{ alignSelf: 'flex-start', marginLeft: '10.5%' }}

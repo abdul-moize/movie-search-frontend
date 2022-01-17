@@ -12,39 +12,35 @@ const FiltersContainer = styled(Stack)`
   color: #ddd;
   margin: 20px;
   border-radius: 10px;
+  .MuiTypography-root {
+    font-size: 1.5vw;
+  }
 `;
 
 const FilterContainer = styled(Stack)`
-  width: ${({ width }) => width || 25}%;
+  width: ${({ width }) => width || 20}%;
   align-content: center;
-  margin: 10px;
+  padding: 20px 10px;
 `;
 
 const GenresContainer = styled(Stack)`
-  width: 95%;
+  width: 100%;
   flex-wrap: wrap;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-start;
   align-self: center;
 `;
 
-const GenreContainer = styled(Stack)`
-  width: 33%;
-  flex-direction: row;
-  align-items: center;
-`;
-
 const FilterHeading = styled(Typography)`
-  color: white;
-  margin: 20px 20px 10px 20px;
+  margin: 10px 0px;
 `;
 
 const SortByFilterContainer = styled(Stack)`
   flex-direction: row;
   align-items: center;
   height: 40px;
-  margin: 0px 0px 0px 2%;
-  width: 80%;
+  
+  width: 90%;
   font-size: 1vw;
   background: ${({ selected }) => (selected ? '#00acc1' : 'transparent')};
   &: hover {
@@ -64,15 +60,42 @@ const TriangleShape = styled.div`
 
 const RowContainer = styled(Stack)`
   flex-direction: row;
-  align-items: center;
-  justify-content: ${({ justifyContent }) => (justifyContent ? 'center' : '')};
+  justify-content: flex-start;
   width: 100%;
   margin: 5px 0px;
+  .MuiTypography-root {
+    font-size: 1vw;
+  }
 `;
 
 const DropDown = styled(Select)`
   background: #fff;
-  margin: 10px;
+  height: 40px;
+  width: 80%;
+`;
+
+const CheckBoxContainer = styled(FormControlLabel)`
+width: 100%;
+@media screen and (min-width: 1100px) {
+  width: 50%;
+}
+@media screen and (min-width: 1300px) {
+  width: 33%;
+}
+margin: 0px;
+.MuiFormControlLabel-label {
+  font-size: 1vw;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+`;
+
+const SortByLabel = styled(Typography)`
+  width: 90%;
+  color: #ddd;
+  margin: 0px 0px 0px 10px
 `;
 
 export default function SearchFilters({ filters, setFilters }) {
@@ -136,7 +159,7 @@ export default function SearchFilters({ filters, setFilters }) {
   return (
     <FiltersContainer>
 
-      <FilterContainer>
+      <FilterContainer width="15">
         <FilterHeading variant="h5">Sort By</FilterHeading>
         <RowContainer>
           <SortByFilterContainer
@@ -145,8 +168,8 @@ export default function SearchFilters({ filters, setFilters }) {
             onMouseLeave={onSortByHoverExit}
             onClick={onSortByChange('vote_average')}
           >
-            <StarRate style={{ height: '100%', margin: '0px 10px' }} />
-            <Typography variant="h6" color="#ddd" width="90%">Rating</Typography>
+            <StarRate style={{ height: '100%' }} />
+            <SortByLabel variant="h6">Rating</SortByLabel>
           </SortByFilterContainer>
           <TriangleShape show={sortByHover === 'vote_average' || sortBy === 'vote_average'} />
         </RowContainer>
@@ -157,8 +180,8 @@ export default function SearchFilters({ filters, setFilters }) {
             onMouseLeave={onSortByHoverExit}
             onClick={onSortByChange('release_date')}
           >
-            <CalendarToday style={{ height: '100%', margin: '0px 10px' }} />
-            <Typography variant="h6" color="#ddd" width="90%">Release Date</Typography>
+            <CalendarToday style={{ height: '100%' }} />
+            <SortByLabel variant="h6">Date</SortByLabel>
           </SortByFilterContainer>
           <TriangleShape show={sortByHover === 'release_date' || sortBy === 'release_date'} />
         </RowContainer>
@@ -169,8 +192,8 @@ export default function SearchFilters({ filters, setFilters }) {
             onMouseLeave={onSortByHoverExit}
             onClick={onSortByChange('popularity')}
           >
-            <Whatshot style={{ height: '100%', margin: '0px 10px' }} />
-            <Typography variant="h6" color="#ddd" width="90%">Popularity</Typography>
+            <Whatshot style={{ height: '100%' }} />
+            <SortByLabel variant="h6">Popularity</SortByLabel>
           </SortByFilterContainer>
           <TriangleShape show={sortByHover === 'popularity' || sortBy === 'popularity'} />
         </RowContainer>
@@ -178,7 +201,7 @@ export default function SearchFilters({ filters, setFilters }) {
 
       <FilterContainer width="15">
         <FilterHeading variant="h5">Sort Mode</FilterHeading>
-        <RowContainer justifyContent="center">
+        <RowContainer>
           <Typography color="#ddd">Asc</Typography>
           <Switch checked={filters.asc === -1} onChange={onSortModeChange} />
           <Typography color="#ddd">Desc</Typography>
@@ -187,25 +210,36 @@ export default function SearchFilters({ filters, setFilters }) {
 
       <FilterContainer width="15">
         <FilterHeading variant="h5">Rating</FilterHeading>
-        <DropDown defaultValue={`${filters.rating}`} onChange={onRatingChange}>
-          {ratingRanges.map(([min, max], index) => <MenuItem key={index} value={index}>{`${min}-${max}`}</MenuItem>)}
+        <DropDown value={`${filters.rating}`} onChange={onRatingChange}>
+          {ratingRanges.map(([min, max], index) => (
+            <MenuItem key={index} value={index}>
+              {`${min}-${max}`}
+            </MenuItem>
+          ))}
         </DropDown>
       </FilterContainer>
 
       <FilterContainer width="15">
         <FilterHeading variant="h5">Popularity</FilterHeading>
-        <DropDown defaultValue={`${filters.popularity}`} onChange={onPopularityChange}>
-          {popularityRanges.map(([min, max], index) => <MenuItem key={(index + 1) * 1000} value={index}>{`${min}-${max}`}</MenuItem>)}
+        <DropDown value={`${filters.popularity}`} onChange={onPopularityChange}>
+          {popularityRanges.map(([min, max], index) => (
+            <MenuItem key={(index + 1) * 1000} value={index}>
+              {`${min}-${max}`}
+            </MenuItem>
+          ))}
         </DropDown>
       </FilterContainer>
 
-      <FilterContainer width="50">
+      <FilterContainer width="40">
         <FilterHeading variant="h5">Genres</FilterHeading>
         <GenresContainer>
           {allGenres.map((genre) => (
-            <GenreContainer key={genre}>
-              <FormControlLabel control={<Checkbox onClick={onGenresChange(genre)} />} label={genre} />
-            </GenreContainer>
+            <CheckBoxContainer
+              key={genre}
+              control={<Checkbox onClick={onGenresChange(genre)} />}
+              title={genre}
+              label={genre}
+            />
           ))}
         </GenresContainer>
       </FilterContainer>

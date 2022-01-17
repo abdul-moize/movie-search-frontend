@@ -1,13 +1,16 @@
 import styled from '@emotion/styled';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
+import { useDispatch, useSelector } from 'react-redux';
 import { Checkbox, CircularProgress, FormControlLabel, Stack, Typography } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import MovieList from '../../components/MovieList';
 import MovieReviews from '../../components/MovieReviews';
 import PersonCard from '../../components/PersonCard/PersonCard';
-import { getMovieDetail, getSimilarMovies } from '../../services/movieService';
+import { addToFavorites, getMovieDetail, getSimilarMovies, removeFromFavorites } from '../../services/movieService';
 import FavoritesContext from '../../context/FavoritesContext';
+import { getRefreshToken, getToken } from '../../redux/nodes/entities/user/selectors';
+import { useTokenService } from '../../services/authService';
 
 const Image = styled.img`
   width: 25%;
@@ -76,11 +79,18 @@ export default function MovieDetail() {
   const { addFavorite, removeFavorite, isFavorite } = useContext(FavoritesContext);
   const [movieDetails, setMovieDetails] = useState({ loading: true, found: false });
 
-  const toggleFavorite = () => {
+  const token = useSelector(getToken);
+  const refreshToken = useSelector(getRefreshToken);
+
+  const dispatch = useDispatch();
+
+  const toggleFavorite = async () => {
     if (isFavorite(id)) {
-      removeFavorite(id);
+      const data = await useTokenService(removeFromFavorites.bind(null, id), token, refreshToken, dispatch);
+      if (data) removeFavorite(id);
     } else {
-      addFavorite({ ...movieDetails });
+      const response = await useTokenService(addToFavorites.bind(null, movieDetails), token, refreshToken, dispatch);
+      if (response) addFavorite(movieDetails);
     }
   };
 

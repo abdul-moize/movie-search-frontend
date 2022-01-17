@@ -1,8 +1,9 @@
 import styled from '@emotion/styled';
 import { Button } from '@mui/material';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import FavoritesContext from '../../context/FavoritesContext';
 import { clearToken } from '../../redux/nodes/entities/user/actions';
 import { getRefreshToken, verifyAuth } from '../../redux/nodes/entities/user/selectors';
 import { logout } from '../../services/authService';
@@ -15,6 +16,9 @@ const Container = styled.div`
   flex-direction: row;
   color: #8e95a5;
   align-items: center;
+  .MuiTypography-root {
+    font-size: 1vw;
+  }
 `;
 
 const Separator = styled.div`
@@ -56,10 +60,13 @@ export default function NavBar() {
   const isLoggedIn = useSelector(verifyAuth);
   const refreshToken = useSelector(getRefreshToken);
 
+  const { setFavorites } = useContext(FavoritesContext);
+
   const dispatch = useDispatch();
   const onLogout = () => {
     logout(refreshToken).then(() => {
       dispatch(clearToken);
+      setFavorites(() => []);
     });
   };
   return (

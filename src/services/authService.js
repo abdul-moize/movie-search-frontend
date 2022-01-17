@@ -53,6 +53,8 @@ export const getNewToken = (refreshToken) => fetch(REFRESH_TOKEN_API, {
 });
 
 export const useTokenService = async (service, token, refreshToken, dispatch) => {
+  if (!token && !refreshToken) return { favorites: [] };
+
   let data = await service(token);
   if (data.status >= 200 && data.status <= 203) return data;
   const newToken = (await getNewToken(refreshToken)).token;
