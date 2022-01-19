@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { Button, TextField, Typography } from '@mui/material';
 import { React, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { setToken } from '../../redux/nodes/entities/user/actions';
 import { login } from '../../services/authService';
 
@@ -17,7 +17,7 @@ const ErrorText = styled(Typography)`
 
 const Container = styled.div`
   width: 30%;
-  height: 50%;
+  height: 500px;
   display: flex;
   margin: auto;
   margin-top: 100px;
@@ -52,7 +52,7 @@ function LoginPage() {
     e.preventDefault();
     setErrorMessage('');
     const formData = new FormData(formRef.current);
-    const { token, refreshToken } = await login(formData);
+    const { token, refreshToken } = (await login(formData)) || {};
     if (token && refreshToken) {
       dispatch(setToken(token, refreshToken));
       nav('/home', { replace: true });
@@ -88,6 +88,7 @@ function LoginPage() {
           Log in
         </StyledButton>
       </FormContainer>
+      <Link to="/register">No account?</Link>
     </Container>
   );
 }

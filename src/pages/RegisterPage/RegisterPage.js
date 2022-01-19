@@ -15,7 +15,7 @@ const ErrorText = styled(Typography)`
 
 const Container = styled.div`
   width: 40%;
-  height: 50%;
+  height: 500px;
   display: flex;
   margin: auto;
   margin-top: 100px;
@@ -41,7 +41,9 @@ function RegisterPage() {
   const formRef = useRef();
 
   const [errorMessage, setErrorMessage] = useState('');
+
   const nav = useNavigate();
+
   const onSubmit = async (e) => {
     e.preventDefault();
     const emailRegex = /[0-9a-zA-Z][0-9a-zA-Z._]*@[0-9a-zA-Z]+\.[a-zA-Z]{2,}\b/;

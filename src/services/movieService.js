@@ -61,11 +61,13 @@ export const getMovieDetail = async (id) => {
       character,
       href: `/actor/${id}/${name}`,
     })),
-    movieCast.crew.filter((person) => person.job === 'Director').map(({ name, profile_path, id }) => ({
-      name,
-      img: `${IMAGE_API_BASE}/w185${profile_path}`,
-      href: `/director/${id}/${name}`,
-    })),
+    movieCast.crew
+      .filter((person) => person.job === 'Director')
+      .map(({ name, profile_path, id }) => ({
+        name,
+        img: `${IMAGE_API_BASE}/w185${profile_path}`,
+        href: `/director/${id}/${name}`,
+      })),
   ];
   return {
     ...extractData(movieData),
@@ -76,15 +78,24 @@ export const getMovieDetail = async (id) => {
 
 export const getSimilarMovies = (id) => getMovies.bind(null, GET_SIMILAR_MOVIES_API.replace('id', id));
 
-const extractReviewData = ({ author_details: { username, avatar_path }, content, updated_at }) => ({
+const extractReviewData = ({
+  author_details: { username, avatar_path },
+  content,
+  updated_at,
+}) => ({
   name: username,
   review: content,
-  avatar: avatar_path && avatar_path.startsWith('/https') ? avatar_path.slice(1) : `${IMAGE_API_BASE}/w185${avatar_path}`,
+  avatar:
+    avatar_path && avatar_path.startsWith('/https')
+      ? avatar_path.slice(1)
+      : `${IMAGE_API_BASE}/w185${avatar_path}`,
   date: updated_at,
 });
 
 export const getReviews = async (id, page = 1) => {
-  const reviews = await (await fetch(`${GET_REVIEWS_API.replace('id', id)}${page}`)).json();
+  const reviews = await (
+    await fetch(`${GET_REVIEWS_API.replace('id', id)}${page}`)
+  ).json();
   return {
     pages: reviews.total_pages,
     reviews: reviews.results.map((review) => extractReviewData(review)),
@@ -92,13 +103,15 @@ export const getReviews = async (id, page = 1) => {
 };
 
 export const searchMovies = (filters) => async (page) => {
-  const movies = await (await fetch(SEARCH_MOVIES_API, {
-    method: 'SEARCH',
-    body: JSON.stringify({ ...filters, page }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })).json();
+  const movies = await (
+    await fetch(SEARCH_MOVIES_API, {
+      method: 'SEARCH',
+      body: JSON.stringify({ ...filters, page }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+  ).json();
   return {
     pages: movies.total_pages,
     movies: movies.results.map((movie) => extractData(movie)),
@@ -118,11 +131,11 @@ export const getGenres = async () => {
 };
 
 export const getFavorites = async (token) => {
-  const res = (await fetch(GET_FAVORITES_API, {
+  const res = await fetch(GET_FAVORITES_API, {
     headers: {
       Authorization: `BEARER ${token}`,
     },
-  }));
+  });
   if (res.status >= 200 && res.status <= 204) return res.json();
   throw res;
 };
@@ -134,9 +147,11 @@ export const addToFavorites = (movie, token) => fetch(ADD_TO_FAVORITES_API, {
     'Content-Type': 'application/json',
     Authorization: `BEARER ${token}`,
   },
-}).then((res) => res.json()).catch((err) => {
-  throw err;
-});
+})
+  .then((res) => res.json())
+  .catch((err) => {
+    throw err;
+  });
 
 export const removeFromFavorites = (movieId, token) => fetch(REMOVE_FROM_FAVORITES_API, {
   method: 'DELETE',
@@ -145,6 +160,8 @@ export const removeFromFavorites = (movieId, token) => fetch(REMOVE_FROM_FAVORIT
     'Content-Type': 'application/json',
     Authorization: `BEARER ${token}`,
   },
-}).then((res) => res.json()).catch((err) => {
-  throw err;
-});
+})
+  .then((res) => res.json())
+  .catch((err) => {
+    throw err;
+  });
