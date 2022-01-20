@@ -25,6 +25,7 @@ export default function MovieReviews() {
         <Stack
           flexDirection="row"
           key={name}
+          data-testid="reviews"
           width="80%"
           margin="10px"
           style={{ background: '1d1d1d' }}
