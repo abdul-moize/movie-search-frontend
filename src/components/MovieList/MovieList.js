@@ -50,7 +50,7 @@ function MovieList({ api, title, moviesList }) {
       };
     }
     return () => {};
-  }, []);
+  }, [api]);
   return (
     <Container>
       {!movieTypes.includes(title) ? (

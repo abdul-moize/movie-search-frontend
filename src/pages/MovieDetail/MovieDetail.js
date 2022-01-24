@@ -9,7 +9,7 @@ import MovieReviews from '../../components/MovieReviews';
 import PersonCard from '../../components/PersonCard/PersonCard';
 import { addToFavorites, getMovieDetail, getSimilarMovies, removeFromFavorites } from '../../services/movieService';
 import FavoritesContext from '../../context/FavoritesContext';
-import { getRefreshToken, getToken } from '../../redux/nodes/entities/user/selectors';
+import { getRefreshToken, getToken, verifyAuth } from '../../redux/nodes/entities/user/selectors';
 import { useTokenService } from '../../services/authService';
 
 const Image = styled.img`
@@ -76,7 +76,12 @@ const FavoriteBoxContainer = styled(FormControlLabel)`
 export default function MovieDetail() {
   const id = parseInt(useParams().id, 10);
 
+  const [isUpdating, setIsUpdating] = useState(false);
+
   const { addFavorite, removeFavorite, isFavorite } = useContext(FavoritesContext);
+
+  const isLoggedIn = useSelector(verifyAuth);
+
   const [movieDetails, setMovieDetails] = useState({ loading: true, found: false });
 
   const token = useSelector(getToken);
@@ -85,6 +90,7 @@ export default function MovieDetail() {
   const dispatch = useDispatch();
 
   const toggleFavorite = async () => {
+    setIsUpdating(true);
     if (isFavorite(id)) {
       const data = await useTokenService(removeFromFavorites.bind(null, id), token, refreshToken, dispatch);
       if (data) removeFavorite(id);
@@ -92,6 +98,7 @@ export default function MovieDetail() {
       const response = await useTokenService(addToFavorites.bind(null, movieDetails), token, refreshToken, dispatch);
       if (response) addFavorite(movieDetails);
     }
+    setIsUpdating(false);
   };
 
   useEffect(() => {
@@ -123,19 +130,23 @@ export default function MovieDetail() {
                 <Icon src="/text.png" alt="runtime" title="duration" />
                 <Typography variant="h6" margin="10px">{movieDetails.runtime}</Typography>
               </DetailContainer>
-              <DetailContainer>
-                <FavoriteBoxContainer
-                  control={(
-                    <FavoriteBox
-                      icon={<FavoriteIconBorder />}
-                      checkedIcon={<FavoriteIcon />}
-                      checked={isFavorite(id)}
-                      onChange={toggleFavorite}
-                    />
-                  )}
-                  label={`Add${isFavorite(id) ? 'ed' : ''} To Favorites`}
-                />
-              </DetailContainer>
+              { isLoggedIn && (
+                <DetailContainer>
+                  <FavoriteBoxContainer
+                    disabled={isUpdating}
+                    control={(
+                      <FavoriteBox
+                        icon={<FavoriteIconBorder />}
+                        checkedIcon={<FavoriteIcon />}
+                        checked={isFavorite(id)}
+                        onChange={toggleFavorite}
+                      />
+                    )}
+                    label={`Add${isFavorite(id) ? 'ed' : ''} To Favorites`}
+                  />
+                </DetailContainer>
+              )}
+
               <DetailContainer>
                 <Typography color="#8e95a5" width="20%">Release Date</Typography>
                 <Typography>{movieDetails.releaseDate}</Typography>
