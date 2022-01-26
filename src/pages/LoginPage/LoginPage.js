@@ -1,8 +1,9 @@
 import styled from '@emotion/styled';
-import { Button, TextField, Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { React, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import TextFieldsGenerator from '../../components/TextFieldsGenerator';
 import { setToken } from '../../redux/nodes/entities/user/actions';
 import { login } from '../../services/authService';
 
@@ -35,10 +36,6 @@ const FormContainer = styled.form`
   justify-content: center;
 `;
 
-const FormTextField = styled(TextField)`
-  width: 80%;
-`;
-
 function LoginPage() {
   const formRef = useRef();
 
@@ -48,46 +45,37 @@ function LoginPage() {
 
   const nav = useNavigate();
 
+  const formFields = ['email', 'password'];
+
   const onSubmit = async (e) => {
     e.preventDefault();
+
     setErrorMessage('');
+
     const formData = new FormData(formRef.current);
     const { token, refreshToken } = (await login(formData)) || {};
+
     if (token && refreshToken) {
       dispatch(setToken(token, refreshToken));
       nav('/home', { replace: true });
-    } else {
-      setErrorMessage('Wrong Email or Password');
+      return;
     }
+
+    setErrorMessage('Wrong Email or Password');
   };
 
   return (
     <Container>
       <Typography variant="h3">Login Page</Typography>
+
       <FormContainer onSubmit={onSubmit} ref={formRef}>
         {errorMessage && <ErrorText color="error">{errorMessage}</ErrorText>}
-        <FormTextField
-          variant="outlined"
-          label="Email"
-          type="email"
-          placeholder="Enter Email"
-          name="email"
-          required
-          margin="dense"
-        />
-        <FormTextField
-          variant="outlined"
-          label="Password"
-          type="password"
-          placeholder="Enter Password"
-          name="password"
-          required
-          margin="dense"
-        />
-        <StyledButton variant="contained" type="submit">
-          Log in
-        </StyledButton>
+
+        <TextFieldsGenerator fields={formFields} styles={{ width: '80%' }} />
+
+        <StyledButton variant="contained" type="submit">Log in</StyledButton>
       </FormContainer>
+
       <Link to="/register">No account?</Link>
     </Container>
   );

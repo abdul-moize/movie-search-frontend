@@ -2,6 +2,7 @@ import { React } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import FavoritesPage from './pages/FavoritesPage/FavoritesPage';
+import HomePage from './pages/HomePage';
 import LatestMovies from './pages/LatestMovies/LatestMovies';
 import LoginPage from './pages/LoginPage';
 import MoreMoviesBy from './pages/MoreMoviesBy';
@@ -23,19 +24,7 @@ function App() {
         <Route exact path="/top_rated" element={<TopRatedMovies />} />
         <Route exact path="/popular" element={<PopularMovies />} />
         <Route path="/movie/:id" element={<MovieDetail />} />
-        <Route
-          exact
-          path="/home"
-          element={
-            (
-              <>
-                <LatestMovies />
-                <TopRatedMovies />
-                <PopularMovies />
-              </>
-            )
-          }
-        />
+        <Route exact path="/home" element={<HomePage />} />
         <Route path="/" element={<SearchPage api={searchMovies} />} />
         <Route path="/actor/:query/:name" element={<MoreMoviesBy api={searchMoviesByCast} />} />
         <Route path="/director/:query/:name" element={<MoreMoviesBy api={searchMoviesByDirector} />} />

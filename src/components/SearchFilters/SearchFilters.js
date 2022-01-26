@@ -15,7 +15,7 @@ import { getGenres } from '../../services/movieService';
 
 const FiltersContainer = styled(Stack)`
   flex-direction: row;
-  width: 78%;
+  width: 78.5%;
   background: #2f3441;
   color: #ddd;
   margin: 20px;
@@ -116,9 +116,9 @@ const YearLabel = styled(Typography)`
 `;
 
 export default function SearchFilters({ filters, setFilters }) {
-  // const sortByFilters = ['rating', 'release_date', 'popularity'];
+  const sortByFilters = [['vote_average', 'Rating', StarRate], ['release_date', 'Date', CalendarToday], ['popularity', 'Popularity', Whatshot]];
+
   const [sortByHover, setSortByHover] = useState('');
-  const [sortBy, setSortBy] = useState(filters.sortBy);
   const [allGenres, setAllGenres] = useState(['Action']);
 
   const popularityRanges = Array.from(Array(10)).map((value, index) => [
@@ -138,7 +138,6 @@ export default function SearchFilters({ filters, setFilters }) {
   ratingRanges.push([0, 10]);
 
   const onSortByChange = (field) => () => {
-    setSortBy(field);
     setFilters({ ...filters, sortBy: field });
   };
 
@@ -183,7 +182,7 @@ export default function SearchFilters({ filters, setFilters }) {
   };
 
   useEffect(() => {
-    onSortByChange('release_date')();
+    onSortByChange(sortByFilters[1][0])();
     getGenres().then((data) => {
       setAllGenres(() => data.map(({ name }) => name));
     });
@@ -195,53 +194,37 @@ export default function SearchFilters({ filters, setFilters }) {
     <FiltersContainer>
       <FilterContainer width="15">
         <FilterHeading>Sort By</FilterHeading>
-        <RowContainer>
-          <SortByFilterContainer
-            selected={sortBy === 'vote_average'}
-            onMouseEnter={onSortByHover('vote_average')}
-            onMouseLeave={onSortByHoverExit}
-            onClick={onSortByChange('vote_average')}
-          >
-            <StarRate style={{ height: '100%' }} />
-            <SortByLabel>Rating</SortByLabel>
-          </SortByFilterContainer>
-          <TriangleShape
-            show={sortByHover === 'vote_average' || sortBy === 'vote_average'}
-          />
-        </RowContainer>
-        <RowContainer>
-          <SortByFilterContainer
-            selected={sortBy === 'release_date'}
-            onMouseEnter={onSortByHover('release_date')}
-            onMouseLeave={onSortByHoverExit}
-            onClick={onSortByChange('release_date')}
-          >
-            <CalendarToday style={{ height: '100%' }} />
-            <SortByLabel>Date</SortByLabel>
-          </SortByFilterContainer>
-          <TriangleShape
-            show={sortByHover === 'release_date' || sortBy === 'release_date'}
-          />
-        </RowContainer>
-        <RowContainer>
-          <SortByFilterContainer
-            selected={sortBy === 'popularity'}
-            onMouseEnter={onSortByHover('popularity')}
-            onMouseLeave={onSortByHoverExit}
-            onClick={onSortByChange('popularity')}
-          >
-            <Whatshot style={{ height: '100%' }} />
-            <SortByLabel>Popularity</SortByLabel>
-          </SortByFilterContainer>
-          <TriangleShape
-            show={sortByHover === 'popularity' || sortBy === 'popularity'}
-          />
-        </RowContainer>
+
+        {sortByFilters.map(([filterName, filterTitle, Icon]) => (
+          <RowContainer key={filterName}>
+            <SortByFilterContainer
+              selected={filters.sortBy === filterName}
+              onMouseEnter={onSortByHover(filterName)}
+              onMouseLeave={onSortByHoverExit}
+              onClick={onSortByChange(filterName)}
+            >
+              <Icon style={{ height: '100%' }} />
+
+              <SortByLabel>{filterTitle}</SortByLabel>
+            </SortByFilterContainer>
+
+            <TriangleShape show={sortByHover === filterName || filters.sortBy === filterName} />
+          </RowContainer>
+        ))}
 
         <RowContainer>
-          <Typography color="#ddd">Asc</Typography>
-          <Switch checked={filters.asc === -1} onChange={onSortModeChange} />
-          <Typography color="#ddd">Desc</Typography>
+          <FormControlLabel
+            style={{ marginLeft: '5px' }}
+            control={(
+              <FormControlLabel
+                style={{ margin: '10px' }}
+                control={<Switch checked={filters.asc === -1} onChange={onSortModeChange} />}
+                label="Desc"
+              />
+            )}
+            label="Asc"
+            labelPlacement="start"
+          />
         </RowContainer>
       </FilterContainer>
 
@@ -258,6 +241,7 @@ export default function SearchFilters({ filters, setFilters }) {
 
       <FilterContainer width="15">
         <FilterHeading>Popularity</FilterHeading>
+
         <DropDown value={`${filters.popularity}`} onChange={onPopularityChange}>
           {popularityRanges.map(([min, max], index) => (
             <MenuItem key={(index + 1) * 1000} value={index}>
@@ -269,7 +253,9 @@ export default function SearchFilters({ filters, setFilters }) {
 
       <FilterContainer width="15">
         <FilterHeading>Year</FilterHeading>
+
         <YearLabel>From</YearLabel>
+
         <DropDown value={filters.release_date.from} onChange={onYearChange} name="from">
           {Array.from(Array(maxYear - 1899)).map((value, index) => (
             <MenuItem key={filters.release_date.to - index} value={maxYear - index}>
@@ -277,7 +263,9 @@ export default function SearchFilters({ filters, setFilters }) {
             </MenuItem>
           ))}
         </DropDown>
+
         <YearLabel>To</YearLabel>
+
         <DropDown value={filters.release_date.to} onChange={onYearChange} name="to">
           {Array.from(Array(maxYear - 1899)).map((value, index) => (
             <MenuItem key={maxYear - index} value={maxYear - index}>
@@ -289,6 +277,7 @@ export default function SearchFilters({ filters, setFilters }) {
 
       <FilterContainer width="40">
         <FilterHeading variant="h5">Genres</FilterHeading>
+
         <GenresContainer>
           {allGenres.map((genre) => (
             <CheckBoxContainer
@@ -298,6 +287,7 @@ export default function SearchFilters({ filters, setFilters }) {
               label={genre}
             />
           ))}
+
         </GenresContainer>
       </FilterContainer>
     </FiltersContainer>

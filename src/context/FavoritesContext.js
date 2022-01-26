@@ -14,6 +14,7 @@ export function FavoritesContextProvider({ children }) {
   const [favorites, setFavorites] = useState([]);
 
   const addFavorite = (movie) => {
+    if (favorites.includes(movie)) return;
     setFavorites((oldFavorites) => oldFavorites.concat(movie));
   };
 

@@ -73,35 +73,25 @@ export default function NavBar() {
     <>
       <Container>
         <LogoContainer>
-          <StyledLink to="/">
-            Search Movies
-          </StyledLink>
+          <StyledLink to="/">Search Movies</StyledLink>
         </LogoContainer>
         <LinksContainer>
-          <StyledLink to="/home">
-            Home
-          </StyledLink>
-          <StyledLink to="/latest">
-            Latest
-          </StyledLink>
-          <StyledLink to="/popular">
-            Popular
-          </StyledLink>
-          <StyledLink to="/top_rated">
-            Top Rated
-          </StyledLink>
-          <StyledLink to="/favorites">
-            My Favorites
-          </StyledLink>
+          <StyledLink to="/home">Home</StyledLink>
+
+          <StyledLink to="/latest">Latest</StyledLink>
+
+          <StyledLink to="/popular">Popular</StyledLink>
+
+          <StyledLink to="/top_rated">Top Rated</StyledLink>
+
           {isLoggedIn ? (
             <>
-              <StyledLink to="/profile">
-                Profile
-              </StyledLink>
+              <StyledLink to="/favorites">My Favorites</StyledLink>
+
               <CustomButton variant="outlined" onClick={onLogout}>Logout</CustomButton>
             </>
           ) : (
-            <Link to="/login">
+            <Link to="/login" style={{ textDecoration: 'none' }}>
               <CustomButton variant="outlined">Login</CustomButton>
             </Link>
           )}

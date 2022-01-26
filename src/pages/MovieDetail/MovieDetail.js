@@ -6,11 +6,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import MovieList from '../../components/MovieList';
 import MovieReviews from '../../components/MovieReviews';
-import PersonCard from '../../components/PersonCard/PersonCard';
 import { addToFavorites, getMovieDetail, getSimilarMovies, removeFromFavorites } from '../../services/movieService';
 import FavoritesContext from '../../context/FavoritesContext';
 import { getRefreshToken, getToken, verifyAuth } from '../../redux/nodes/entities/user/selectors';
 import { useTokenService } from '../../services/authService';
+import CastAndDirector from '../../components/CastAndDirector/CastAndDirector';
 
 const Image = styled.img`
   width: 25%;
@@ -160,35 +160,21 @@ export default function MovieDetail() {
                   </React.Fragment>
                 ))}
               </DetailContainer>
-              <DetailContainer>
-                <Typography color="#8e95a5" width="20%">Cast</Typography>
-                <Stack flexDirection="row" flexWrap="wrap" width="80%">
-                  {movieDetails.cast.map((person) => (
-                    /* eslint-disable-next-line react/jsx-props-no-spreading */
-                    <PersonCard {...person} key={person.name} />
-                  ))}
-                </Stack>
-              </DetailContainer>
-              <DetailContainer>
-                <Typography color="#8e95a5" width="20%">Director</Typography>
-                <Stack flexDirection="row" flexWrap="wrap" width="80%">
-                  {movieDetails.director.map((person) => (
-                    /* eslint-disable-next-line react/jsx-props-no-spreading */
-                    <PersonCard {...person} key={person.name} />
-                  ))}
-                </Stack>
-              </DetailContainer>
+
+              <CastAndDirector castAndDirector={[movieDetails.cast, movieDetails.director]} />
             </Stack>
           </MovieDetailsContainer>
           <MovieReviews />
           <MovieList api={getSimilarMovies(id)} title="similar" />
         </>
       )}
+
       {movieDetails.loading && (
         <Stack alignItems="center">
           <CircularProgress />
         </Stack>
       )}
+
       {!movieDetails.loading && !movieDetails.found && (
         <MovieDetailsContainer>
           <Typography color="white" textAlign="center">Movie not found</Typography>

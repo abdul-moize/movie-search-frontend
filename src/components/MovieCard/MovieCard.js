@@ -26,6 +26,7 @@ const Title = styled(Typography)`
   white-space: nowrap;
   color: white;
   width: 90%;
+  font-size: 1vw;
   height: 10%;
 `;
 
@@ -33,6 +34,7 @@ export default function MovieCard({ movie: { img, title, href } }) {
   return (
     <Card to={href}>
       <Image src={img} alt={title} />
+
       <Title title={title}>{title}</Title>
     </Card>
   );

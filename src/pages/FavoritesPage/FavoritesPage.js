@@ -20,7 +20,5 @@ export default function FavoritesPage() {
     setFavorites(() => favorites);
   }, []);
 
-  return (
-    <MovieList key={favoriteMovies} moviesList={favoriteMovies} title="favorite" />
-  );
+  return <MovieList key={favoriteMovies} moviesList={favoriteMovies} title="favorite" />;
 }

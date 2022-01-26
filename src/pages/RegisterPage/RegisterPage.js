@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
-import { Button, TextField, Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { React, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import TextFieldsGenerator from '../../components/TextFieldsGenerator';
 import { register } from '../../services/authService';
 
 const StyledButton = styled(Button, {})`
@@ -33,16 +34,14 @@ const FormContainer = styled.form`
   justify-content: center;
 `;
 
-const FormTextField = styled(TextField)`
-  width: 80%;
-`;
-
 function RegisterPage() {
   const formRef = useRef();
 
   const [errorMessage, setErrorMessage] = useState('');
 
   const nav = useNavigate();
+
+  const formFields = ['name', 'email', 'password'];
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -70,37 +69,13 @@ function RegisterPage() {
   return (
     <Container>
       <Typography variant="h3">Register Page</Typography>
+
       <FormContainer onSubmit={onSubmit} ref={formRef}>
         {errorMessage && <ErrorText color="error">{errorMessage}</ErrorText>}
-        <FormTextField
-          variant="outlined"
-          label="Name"
-          placeholder="Enter Name"
-          name="name"
-          required
-          margin="dense"
-        />
-        <FormTextField
-          variant="outlined"
-          label="Email"
-          type="email"
-          placeholder="Enter Email"
-          name="email"
-          required
-          margin="dense"
-        />
-        <FormTextField
-          variant="outlined"
-          label="Password"
-          type="password"
-          placeholder="Enter Password"
-          name="password"
-          required
-          margin="dense"
-        />
-        <StyledButton variant="contained" type="submit">
-          Register
-        </StyledButton>
+
+        <TextFieldsGenerator fields={formFields} styles={{ width: '80%' }} />
+
+        <StyledButton variant="contained" type="submit">Register</StyledButton>
       </FormContainer>
     </Container>
   );

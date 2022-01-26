@@ -81,6 +81,7 @@ export default function SearchPage({ api }) {
     asc: -1,
     release_date: { from: '1900', to: `${new Date().getFullYear() + 3}` },
   });
+
   const onSearch = () => {
     setFilters({ ...filters, title: searchBarRef.current.value });
   };
@@ -90,6 +91,7 @@ export default function SearchPage({ api }) {
       <Typography variant="h2" margin="30px">
         Search Movies
       </Typography>
+
       <SearchBarContainer>
         <SearchBar
           freeSolo
@@ -108,16 +110,17 @@ export default function SearchPage({ api }) {
           )}
           options={[]}
         />
+
         <SearchButton onClick={onSearch}>
           <SearchIcon style={{ width: '100%', height: '100%' }} />
         </SearchButton>
+
       </SearchBarContainer>
+
       <SearchFilters setFilters={setFilters} filters={filters} />
-      <MovieList
-        key={Object.values(filters)}
-        api={api(filters)}
-        title="Matched"
-      />
+
+      <MovieList api={api(filters)} title="Matched" />
+
     </MainContainer>
   );
 }

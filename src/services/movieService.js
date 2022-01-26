@@ -55,7 +55,7 @@ export const getMovieDetail = async (id) => {
     await fetch(GET_CREDIT_API.replace('id', id))
   ).json();
   const [cast, director] = [
-    movieCast.cast.slice(0, 5).map(({ name, profile_path, character, id }) => ({
+    movieCast.cast.map(({ name, profile_path, character, id }) => ({
       name,
       img: `${IMAGE_API_BASE}/w185${profile_path}`,
       character,

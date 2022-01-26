@@ -1,75 +1,85 @@
 import React, { useEffect, useState } from 'react';
-import { CircularProgress, Pagination, Stack, Typography } from '@mui/material';
+import styled from '@emotion/styled';
+import { CircularProgress, Stack, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { getReviews } from '../../services/movieService';
+import CustomPagination from '../CustomPagination';
 
+const ReviewTextContainer = styled(Typography)`
+  border: solid 10px;
+  border-color: #8e95a5;
+  border-radius: 0px 10px 10px 0px;
+  color: white;
+  padding: 10px;
+  width: 80%;
+`;
+
+const ReviewerDetailsContainer = styled(Stack)`
+  align-items: center;
+  border: solid 10px;
+  border-color: #8e95a5;
+  border-radius: 10px 0px 0px 10px;
+  justify-content: center;
+  width: 20%;
+`;
+
+const ReviewContainer = styled(Stack)`
+  background: 1d1d1d;
+  flex-direction: row;
+  margin: 10px;
+  width: 79%;
+`;
+
+const HeadingContainer = styled(Typography)`
+  align-self: flex-start;
+  margin-left: 10.75%;
+`;
+
+const MainContainer = styled(Stack)`
+  align-items: center;
+  justify-content: center
+`;
 export default function MovieReviews() {
   const { id } = useParams();
 
-  const [state, setState] = useState({ loading: true, pages: 5, page: 1 });
-  useEffect(() => {
-    getReviews(id, state.page).then((reviews) => {
-      setState({ ...reviews, loading: false });
+  const [state, setState] = useState({ loading: true, pages: 5, reviews: [] });
+
+  const loadReviews = (page) => {
+    getReviews(id, page).then((reviews) => {
+      setState({ ...state, ...reviews, loading: false });
     });
-    return () => {
-      setState({});
-    };
+  };
+
+  const onPageChange = (e, page) => {
+    loadReviews(page);
+  };
+
+  useEffect(() => {
+    loadReviews(1);
   }, []);
   return (
-    <Stack justifyContent="center" alignItems="center">
-      <Typography variant="h6" alignSelf="flex-start" marginLeft="10.5%">
-        REVIEWS
-      </Typography>
+    <MainContainer>
+      <HeadingContainer variant="h6">REVIEWS</HeadingContainer>
+
       {state.loading && <CircularProgress />}
+
       {!state.loading && state.reviews.map(({ name, avatar, review }) => (
-        <Stack
-          flexDirection="row"
-          key={name}
-          data-testid="reviews"
-          width="80%"
-          margin="10px"
-          style={{ background: '1d1d1d' }}
-        >
-          <Stack
-            width="20%"
-            alignItems="center"
-            justifyContent="center"
-            border="solid 10px"
-            borderColor="#8e95a5"
-          >
+        <ReviewContainer key={name} data-testid="reviews">
+          <ReviewerDetailsContainer>
             <img src={avatar} alt="NA" width="50%" />
+
             <Typography>{name}</Typography>
-          </Stack>
-          <Typography
-            color="white"
-            width="80%"
-            padding="10px"
-            border="solid 10px"
-            borderColor="#8e95a5"
-          >
-            {review}
-          </Typography>
-        </Stack>
+          </ReviewerDetailsContainer>
+
+          <ReviewTextContainer>{review}</ReviewTextContainer>
+        </ReviewContainer>
       ))}
-      {!state.loading && (state.pages > 1 ? (
-        <Pagination
-          count={state.pages}
-          color="primary"
-          shape="rounded"
-          size="large"
-          sx={{ marginBottom: '10px' }}
-          onChange={(e, p) => {
-            setState({ ...state, page: p, loading: true });
-            getReviews(p).then((reviews) => {
-              setState(reviews);
-            });
-          }}
-        />
-      ) : (
-        state.reviews.length === 0 && (
-          <Typography color="white">No reviews found</Typography>
-        )
-      ))}
-    </Stack>
+
+      {!state.loading && state.reviews.length === 0 && (
+        <Typography color="white">No reviews found</Typography>
+      )}
+
+      {state.pages > 1 && <CustomPagination pages={state.pages} onPageChange={onPageChange} />}
+    </MainContainer>
   );
 }

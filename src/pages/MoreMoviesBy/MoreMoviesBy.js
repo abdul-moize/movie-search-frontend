@@ -5,9 +5,7 @@ import MovieList from '../../components/MovieList';
 
 export default function MoreMoviesBy({ api }) {
   const { query, name } = useParams();
-  return (
-    <MovieList api={api(query)} title={name} />
-  );
+  return <MovieList api={api(query)} title={name} />;
 }
 
 MoreMoviesBy.defaultProps = {

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { CircularProgress, Pagination, Typography } from '@mui/material';
+import { CircularProgress, Typography } from '@mui/material';
 import MovieCard from '../MovieCard';
+import CustomPagination from '../CustomPagination';
 
 const Container = styled.div`
   width: 100%;
@@ -22,7 +23,7 @@ const MoviesContainer = styled.div`
 
 const TitleContainer = styled(Typography)`
   margin: 10px;
-  margin-left: 1%;
+  margin-left: 1.25%;
   color: #00acc1;
   text-align: left;
   border-radius: 5px;
@@ -34,6 +35,10 @@ function MovieList({ api, title, moviesList }) {
   const [isLoading, setIsLoading] = useState(moviesList === null);
 
   const loadMovies = (page) => {
+    if (!isLoading) {
+      setIsLoading(true);
+    }
+
     api(page).then((data) => {
       setMovies(data.movies);
       setTotalPages(data.pages);
@@ -41,6 +46,10 @@ function MovieList({ api, title, moviesList }) {
     });
   };
   const movieTypes = ['top_rated', 'popular', 'latest'];
+
+  const onPageChange = (e, p) => {
+    loadMovies(p);
+  };
 
   useEffect(() => {
     if (!moviesList) {
@@ -54,22 +63,17 @@ function MovieList({ api, title, moviesList }) {
   return (
     <Container>
       {!movieTypes.includes(title) ? (
-        <TitleContainer
-          variant="h6"
-          style={{ alignSelf: 'flex-start', marginLeft: '10.5%' }}
-        >
+        <TitleContainer variant="h6" style={{ alignSelf: 'flex-start', marginLeft: '10.75%' }}>
           {`${title.toUpperCase().replaceAll('_', ' ')} MOVIES`}
         </TitleContainer>
       ) : (
-        <Link
-          to={`/${title}`}
-          style={{ textDecoration: 'none', width: '80%', margin: 'auto' }}
-        >
+        <Link to={`/${title}`} style={{ textDecoration: 'none', width: '80%', margin: 'auto' }}>
           <TitleContainer variant="h6">{`${title.toUpperCase().replaceAll('_', ' ')} MOVIES`}</TitleContainer>
         </Link>
       )}
 
       {isLoading && <CircularProgress />}
+
       {!isLoading && totalPages > 0 ? (
         <MoviesContainer>
           {movies.map((movie) => (
@@ -79,19 +83,8 @@ function MovieList({ api, title, moviesList }) {
       ) : (
         !isLoading && <Typography color="white">No movies found</Typography>
       )}
-      {!moviesList && totalPages > 0 && (
-        <Pagination
-          count={totalPages}
-          color="primary"
-          shape="rounded"
-          size="large"
-          sx={{ marginBottom: '10px' }}
-          onChange={(e, p) => {
-            loadMovies(p);
-            setIsLoading(true);
-          }}
-        />
-      )}
+
+      {!moviesList && totalPages > 0 && <CustomPagination pages={totalPages} onPageChange={onPageChange} />}
     </Container>
   );
 }

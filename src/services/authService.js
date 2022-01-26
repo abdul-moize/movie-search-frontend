@@ -1,12 +1,9 @@
 import { LOGIN_API, LOGOUT_API, REGISTER_API, REFRESH_TOKEN_API } from '../constants';
 import { setToken } from '../redux/nodes/entities/user/actions';
 
-export const login = (formData) => fetch(LOGIN_API, {
+const sendData = (api, userData) => fetch(api, {
   method: 'POST',
-  body: JSON.stringify({
-    email: formData.get('email'),
-    password: formData.get('password'),
-  }),
+  body: JSON.stringify(Object.fromEntries(userData.entries())),
   headers: {
     'Content-Type': 'application/json',
   },
@@ -16,21 +13,9 @@ export const login = (formData) => fetch(LOGIN_API, {
     throw err;
   });
 
-export const register = (formData) => fetch(REGISTER_API, {
-  method: 'POST',
-  body: JSON.stringify({
-    email: formData.get('email'),
-    password: formData.get('password'),
-    name: formData.get('name'),
-  }),
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})
-  .then((res) => res.json())
-  .catch((err) => {
-    throw err;
-  });
+export const login = (formData) => sendData(LOGIN_API, formData);
+
+export const register = (formData) => sendData(REGISTER_API, formData);
 
 export const logout = (refreshToken) => fetch(LOGOUT_API, {
   method: 'DELETE',
